@@ -2,18 +2,14 @@
 
 namespace PacketSender.Core
 {
-    /// <summary>
-    /// Basic UDP transceiver model
-    /// </summary>
-    public sealed class UdpTransceiver : EthernetComm, ISendable
+    public sealed class TcpTransceiver : EthernetComm, ISendable
     {
         public UdpClient Client { get; }
-        public UdpTransceiver(string iP, int port) : base(iP, port)
+        public TcpTransceiver(string iP, int port) : base(iP, port)
         {
             Client = new UdpClient(IP, Port);
         }
-
-        public UdpTransceiver()
+        public TcpTransceiver()
         {
 
         }
@@ -41,7 +37,6 @@ namespace PacketSender.Core
                 }
                 catch (Exception ex)
                 {
-                    LastException = ex;
                     reply.Status = CommunicationStatus.SentButReceiveFailed;
                 }
             }

@@ -10,14 +10,24 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
+		<PackageReference Include="HandyControl" Version="3.3.0" />
 		<PackageReference Include="System.Reactive" Version="5.0.0" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Folder Include="Views\" />
 	  <Folder Include="Services\" />
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\PacketSender.Core\PacketSender.Core.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Update="Views\SerialTemplate.xaml">
+	    <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+	    <SubType>Designer</SubType>
+	  </Page>
+	  <Page Update="Views\TcpTemplate.xaml">
+	    <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+	    <SubType>Designer</SubType>
+	  </Page>
 	</ItemGroup>
 
 	<Target Name="RemoveDuplicateAnalyzers" BeforeTargets="CoreCompile">

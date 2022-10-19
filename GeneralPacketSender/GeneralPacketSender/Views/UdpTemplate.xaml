@@ -2,12 +2,10 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:ps="clr-namespace:PacketSender.Core;assembly=PacketSender.Core">
 
-
     <DataTemplate DataType="{x:Type ps:UdpTransceiver}">
         <Grid VerticalAlignment="Top" HorizontalAlignment="Left" Margin="5">
             <StackPanel>
                 <TextBlock Text="UDP" HorizontalAlignment="Center"/>
-                <Button Content="Send"/>
             </StackPanel>
         </Grid>
     </DataTemplate>

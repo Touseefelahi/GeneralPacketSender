@@ -5,7 +5,6 @@
         <Grid VerticalAlignment="Top" HorizontalAlignment="Left" Margin="5">
             <StackPanel>
                 <TextBlock Text="Serial" HorizontalAlignment="Center"/>
-                <Button Content="Send"/>
             </StackPanel>
         </Grid>
     </DataTemplate>

@@ -20,6 +20,10 @@
 	  <ProjectReference Include="..\PacketSender.Core\PacketSender.Core.csproj" />
 	</ItemGroup>
 	<ItemGroup>
+	  <Page Update="Views\SendableTemplate.xaml">
+	    <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+	    <SubType>Designer</SubType>
+	  </Page>
 	  <Page Update="Views\SerialTemplate.xaml">
 	    <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
 	    <SubType>Designer</SubType>

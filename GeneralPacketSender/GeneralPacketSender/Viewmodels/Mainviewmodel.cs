@@ -13,17 +13,22 @@ namespace GeneralPacketSender.Viewmodels
         }
 
         [ObservableProperty]
-        ObservableCollection<object> sendables;
+        ObservableCollection<SenderViewmodel> sendables;
 
         private void LoadLastConfiguration()
         {
-            sendables = new() { new UdpTransceiver(), new TcpTransceiver() };
+            sendables = new()
+            {
+                new SenderViewmodel() { CommunicationType = CommunicationType.Udp },
+                new SenderViewmodel() { CommunicationType = CommunicationType.Tcp },
+                new SenderViewmodel() { CommunicationType = CommunicationType.Serial }
+            };
         }
 
         [RelayCommand]
         private void AddNewControl()
         {
-            sendables.Add(new UdpTransceiver());
+            sendables.Add(new SenderViewmodel() { CommunicationType = CommunicationType.Udp });
         }
     }
 }

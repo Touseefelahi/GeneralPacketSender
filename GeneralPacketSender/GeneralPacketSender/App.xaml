@@ -12,6 +12,7 @@
                 <ResourceDictionary Source="Views/UdpTemplate.xaml"/>
                 <ResourceDictionary Source="Views/TcpTemplate.xaml"/>
                 <ResourceDictionary Source="Views/SerialTemplate.xaml"/>
+                <ResourceDictionary Source="Views/SendableTemplate.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

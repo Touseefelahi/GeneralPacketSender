@@ -1,4 +1,5 @@
 ﻿using System.Net.Sockets;
+using PacketSender.Core.Interfaces;
 
 namespace PacketSender.Core
 {

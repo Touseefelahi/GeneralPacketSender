@@ -8,7 +8,7 @@ namespace PacketSender.Core
     public sealed class UdpTransceiver : EthernetComm, ISendable
     {
         public UdpClient Client { get; }
-        public UdpTransceiver(string iP, int port) : base(iP, port)
+        public UdpTransceiver(string ip, int port) : base(ip, port)
         {
             Client = new UdpClient(IP, Port);
         }

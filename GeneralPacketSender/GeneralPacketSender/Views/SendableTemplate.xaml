@@ -3,7 +3,7 @@
                     xmlns:viewmodel="clr-namespace:GeneralPacketSender.Viewmodels">
     <DataTemplate DataType="{x:Type viewmodel:SenderViewmodel}">
         <Grid VerticalAlignment="Top" HorizontalAlignment="Left" Margin="5">
-            <StackPanel>
+            <StackPanel>                
                 <ContentPresenter Content="{Binding Sendable}"/>
                 <Button Content="Send" Command="{Binding SendCommand}"/>
             </StackPanel>

@@ -1,6 +1,7 @@
 ﻿using GeneralPacketSender.Models;
 using PacketSender.Core;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace GeneralPacketSender.Viewmodels
 {
@@ -21,6 +22,12 @@ namespace GeneralPacketSender.Viewmodels
         }
 
         [ObservableProperty]
+        private bool showSettings;
+
+
+
+        [ObservableProperty]
+        [XmlIgnore]
         private ISendable sendable;
 
         [ObservableProperty]
@@ -47,10 +54,10 @@ namespace GeneralPacketSender.Viewmodels
             switch (CommunicationType)
             {
                 case CommunicationType.Udp:
-                    Sendable = new UdpTransceiver();
+                    Sendable = new UdpTransceiver("192.168.250.105", 4454);
                     break;
                 case CommunicationType.Tcp:
-                    Sendable = new TcpTransceiver();
+                    Sendable = new TcpTransceiver("172.20.10.5", 3030);
                     break;
                 case CommunicationType.Serial:
                     Sendable = new SerialTransceiver();

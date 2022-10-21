@@ -1,5 +1,4 @@
-﻿using PacketSender.Core.Interfaces;
-
+﻿
 namespace PacketSender.Core
 {
     /// <summary>

@@ -8,7 +8,7 @@
         /// <summary>
         /// Type of value
         /// </summary>
-        public Type Type { get; set; }
+        public DataType DataType { get; set; }
 
         /// <summary>
         /// Name of value

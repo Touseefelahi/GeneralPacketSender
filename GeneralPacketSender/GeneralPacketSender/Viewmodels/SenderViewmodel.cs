@@ -35,6 +35,8 @@ namespace GeneralPacketSender.Viewmodels
 
         private CommunicationType communicationType;
 
+        [ObservableProperty]
+        private Parser parser;
         public SenderViewmodel()
         {
             PacketInfo = new PacketInfo

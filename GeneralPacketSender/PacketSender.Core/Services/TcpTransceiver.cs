@@ -1,6 +1,4 @@
 ﻿using System.Net.Sockets;
-using PacketSender.Core.Interfaces;
-
 namespace PacketSender.Core
 {
     public sealed class TcpTransceiver : EthernetComm, ISendable

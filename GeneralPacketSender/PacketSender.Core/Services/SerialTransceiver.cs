@@ -42,5 +42,12 @@ namespace PacketSender.Core
 
             return reply;
         }
+
+        public object Clone()
+        {
+            var cloned = (SerialTransceiver)MemberwiseClone();
+            cloned.CommPort = CommPort;
+            return MemberwiseClone();
+        }
     }
 }

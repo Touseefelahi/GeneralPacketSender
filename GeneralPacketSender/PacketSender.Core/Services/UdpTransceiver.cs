@@ -1,4 +1,5 @@
-﻿using System.Net.Sockets;
+﻿using System.Net;
+using System.Net.Sockets;
 
 namespace PacketSender.Core
 {
@@ -10,7 +11,7 @@ namespace PacketSender.Core
         public UdpClient Client { get; }
         public UdpTransceiver(string ip, int port) : base(ip, port)
         {
-            Client = new UdpClient(IP, Port);
+            Client = new UdpClient();
         }
 
         public UdpTransceiver()
@@ -24,7 +25,8 @@ namespace PacketSender.Core
             {
                 Status = CommunicationStatus.ConnectionTimeout
             };
-            var sentBytes = await Client.SendAsync(dataToSend);
+            cancellationToken ??= new();
+            var sentBytes = await Client.SendAsync(dataToSend, new IPEndPoint(IPAddress.Parse(IP), Port), cancellationToken.Token);
             if (sentBytes == dataToSend.Length)
             {
                 reply.Status = CommunicationStatus.Sent;
@@ -33,7 +35,6 @@ namespace PacketSender.Core
             {
                 try
                 {
-                    cancellationToken ??= new();
                     cancellationToken.CancelAfter(Timeout);
                     var result = await Client.ReceiveAsync(cancellationToken.Token);
                     reply.SetReply(result.Buffer);
@@ -46,6 +47,14 @@ namespace PacketSender.Core
                 }
             }
             return reply;
+        }
+
+
+
+        public object Clone()
+        {
+            var cloned = this.MemberwiseClone();
+            return cloned;
         }
     }
 }

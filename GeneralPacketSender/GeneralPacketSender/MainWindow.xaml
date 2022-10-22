@@ -16,8 +16,6 @@
     <Window.Resources>
         <local:BytesToHexStringConverter x:Key="StringToHex" />
     </Window.Resources>
-
-
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -98,17 +96,17 @@
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" Visibility="{c:Binding 'SelectedSendable.CommunicationType == core:CommunicationType.Serial'}">
+                    <TextBox Text="Serial is not implemented" />
                     <ComboBox
                         MinWidth="80"
                         Margin="5,2"
                         ItemsSource="{Binding Source={con:EnumToSource EnumType=core:CommunicationType}}"
                         SelectedItem="{Binding SelectedSendable.CommunicationType}" />
                 </StackPanel>
+                <ToggleButton x:Name="showParserCheck" Content="Add Parser" />
             </StackPanel>
 
-
         </Grid>
-
         <ListBox
             Grid.Row="1"
             ItemsSource="{Binding Sendables}"
@@ -119,5 +117,15 @@
                 </ItemsPanelTemplate>
             </ListBox.ItemsPanel>
         </ListBox>
+        <Expander
+            Grid.Row="1"
+            Panel.ZIndex="6"
+            IsExpanded="{Binding ElementName=showParserCheck, Path=IsChecked}">
+            <StackPanel VerticalAlignment="Top">
+                <TextBlock Text="Parser Panel" />
+                <DataGrid ItemsSource="{Binding SelectedSendable.ParserList, Mode=TwoWay}" />
+                <Button Command="{Binding AddParserCommand}" Content="Add" />
+            </StackPanel>
+        </Expander>
     </Grid>
 </Window>

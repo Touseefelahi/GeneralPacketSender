@@ -3,11 +3,18 @@ using System.Runtime.InteropServices;
 
 namespace PacketSender.Core
 {
-    public sealed class Parser
+    public static class Parser
     {
-        public List<object> Parse(ReadOnlyMemory<byte> databytes, List<ParserInfo> parserInfoList)
+        /// <summary>
+        /// This is generic parser, it parses the data according to the provided parser info
+        /// </summary>
+        /// <param name="databytes"></param>
+        /// <param name="parserInfoList"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public static List<object> Parse(ReadOnlyMemory<byte> databytes, IEnumerable<ParserInfo> parserInfoList)
         {
-            if (parserInfoList is not null && databytes.Span.Length > 0 && parserInfoList.Count > 0)
+            if (parserInfoList is not null && databytes.Span.Length > 0 && parserInfoList.Count() > 0)
             {
                 List<object> listOfValues = new();
                 foreach (var parser in parserInfoList)
@@ -67,7 +74,7 @@ namespace PacketSender.Core
         /// <param name="memory">Memory of bytes </param>
         /// <param name="startIndex">Start index of value</param>
         /// <returns>Parsed Value</returns>
-        private T Get<T>(ReadOnlyMemory<byte> memory, int startIndex) where T : struct
+        private static T Get<T>(ReadOnlyMemory<byte> memory, int startIndex) where T : struct
         {
             int length = Marshal.SizeOf(typeof(T));
             if (startIndex + length >= memory.Length)

@@ -1,8 +1,5 @@
-﻿using HandyControl.Interactivity;
-using PacketSender.Core;
-using System.Collections.Generic;
+﻿using PacketSender.Core;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
 namespace GeneralPacketSender.Viewmodels
@@ -10,7 +7,7 @@ namespace GeneralPacketSender.Viewmodels
     public sealed partial class Mainviewmodel : ObservableObject
     {
         [ObservableProperty]
-        private string title = "Advance Packet Sender";
+        private string title = "Advanced Packet Sender";
         public Mainviewmodel()
         {
             LoadLastConfiguration();
@@ -39,7 +36,7 @@ namespace GeneralPacketSender.Viewmodels
         [RelayCommand]
         private void AddNewControl()
         {
-            sendables.Add(new SenderViewmodel() { CommunicationType = CommunicationType.Udp });
+            sendables.Add((SenderViewmodel)SelectedSendable.Clone());
             return;
             XmlWriterSettings xmlWriterSettings = new() { Indent = true };
             using XmlWriter writer = XmlWriter.Create(fileName, xmlWriterSettings);
@@ -52,5 +49,13 @@ namespace GeneralPacketSender.Viewmodels
         {
             SelectedSendable.SendCommand.Execute(null);
         }
+
+
+        [RelayCommand]
+        private void AddParser()
+        {
+            SelectedSendable.ParserList.Add(new ParserInfo());
+        }
+
     }
 }

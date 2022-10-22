@@ -41,5 +41,10 @@ namespace PacketSender.Core
             }
             return reply;
         }
+
+        public object Clone()
+        {
+            return MemberwiseClone();
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Reflection.Emit;
+using System.Text;
 using System.Xml.Serialization;
 
 namespace GeneralPacketSender.Models
@@ -6,7 +7,7 @@ namespace GeneralPacketSender.Models
     /// <summary>
     /// Basic packet information
     /// </summary>
-    public sealed class PacketInfo
+    public sealed class PacketInfo : ICloneable
     {
         private Memory<byte> command;
         private string? commandAsString;
@@ -73,6 +74,17 @@ namespace GeneralPacketSender.Models
             catch (Exception ex)
             {
             }
+        }
+
+        /// <summary>
+        /// It will create the deep copy of this object
+        /// </summary>
+        /// <returns></returns>
+        public object Clone()
+        {
+            var cloned = (PacketInfo)MemberwiseClone();
+            cloned.Command = new Memory<byte>(Command.Span.ToArray());
+            return cloned;
         }
     }
 }

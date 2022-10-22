@@ -3,7 +3,7 @@
     /// <summary>
     /// Parser Info
     /// </summary>
-    public struct ParserInfo
+    public sealed class ParserInfo
     {
         /// <summary>
         /// Type of value
@@ -19,5 +19,18 @@
         /// Start Index in the reply packet
         /// </summary>
         public int StartIndex { get; set; }
+
+
+        public ParserInfo()
+        {
+
+        }
+
+        public ParserInfo(DataType dataType, string name, int startIndex)
+        {
+            DataType = dataType;
+            Name = name;
+            StartIndex = startIndex;
+        }
     }
 }

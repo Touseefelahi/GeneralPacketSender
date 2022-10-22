@@ -1,12 +1,14 @@
 ﻿using GeneralPacketSender.Models;
 using PacketSender.Core;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
 namespace GeneralPacketSender.Viewmodels
 {
     [ObservableObject]
-    public sealed partial class SenderViewmodel
+    public sealed partial class SenderViewmodel : ICloneable
     {
         [ObservableProperty]
         bool isRepeatSendOn;
@@ -24,8 +26,6 @@ namespace GeneralPacketSender.Viewmodels
         [ObservableProperty]
         private bool showSettings;
 
-
-
         [ObservableProperty]
         [XmlIgnore]
         private ISendable sendable;
@@ -36,9 +36,10 @@ namespace GeneralPacketSender.Viewmodels
         private CommunicationType communicationType;
 
         [ObservableProperty]
-        private Parser parser;
+        private ObservableCollection<ParserInfo> parserList;
         public SenderViewmodel()
         {
+            parserList = new();
             PacketInfo = new PacketInfo
             {
                 Command = new Memory<byte>(new byte[] { 45, 78, 65 })
@@ -48,7 +49,11 @@ namespace GeneralPacketSender.Viewmodels
         [RelayCommand]
         private async Task Send()
         {
-            await Sendable.SendAsync(PacketInfo.Command);
+            var reply = await Sendable.SendAsync(PacketInfo.Command);
+            if (ParserList.Count > 0)
+            {
+                Parser.Parse(reply.ReplyData, ParserList);
+            }
         }
 
         private void SetSender()
@@ -65,6 +70,15 @@ namespace GeneralPacketSender.Viewmodels
                     Sendable = new SerialTransceiver();
                     break;
             }
+        }
+
+        public object Clone()
+        {
+            var cloned = (SenderViewmodel)MemberwiseClone();
+            cloned.PacketInfo = (PacketInfo)PacketInfo.Clone();
+            cloned.sendable = (ISendable)Sendable.Clone();
+            return cloned;
+
         }
     }
 }

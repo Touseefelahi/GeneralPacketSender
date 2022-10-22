@@ -12,14 +12,14 @@ namespace PacketSender.Core
         /// <param name="parserInfoList"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public static List<object> Parse(ReadOnlyMemory<byte> databytes, IEnumerable<ParserInfo> parserInfoList)
+        public static ParsedData[] Parse(ReadOnlyMemory<byte> databytes, IEnumerable<ParserInfo> parserInfoList)
         {
             if (parserInfoList is not null && databytes.Span.Length > 0 && parserInfoList.Count() > 0)
             {
-                List<object> listOfValues = new();
+                List<ParsedData> listOfValues = new();
                 foreach (var parser in parserInfoList)
                 {
-                    object value = null;
+                    IConvertible value = null;
                     switch (parser.DataType) //Solve this type so that we can make it totally generic
                     {
                         case DataType.Bool:
@@ -60,9 +60,9 @@ namespace PacketSender.Core
                             value = Get<double>(databytes, parser.StartIndex);
                             break;
                     }
-                    listOfValues.Add(value);
+                    listOfValues.Add(new(parser.Name, value));
                 }
-                return listOfValues;
+                return listOfValues.ToArray();
             }
             return null;
         }

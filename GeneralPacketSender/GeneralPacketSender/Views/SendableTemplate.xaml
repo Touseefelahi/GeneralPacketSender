@@ -1,6 +1,7 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
     xmlns:viewmodel="clr-namespace:GeneralPacketSender.Viewmodels">
     <DataTemplate DataType="{x:Type viewmodel:SenderViewmodel}">
         <Grid
@@ -9,8 +10,15 @@
             VerticalAlignment="Top">
             <StackPanel>
                 <ContentPresenter Content="{Binding Sendable}" />
-                <Button Command="{Binding SendCommand}" Content="Send" />
-                <DataGrid Width="300" ItemsSource="{Binding Result}" />
+                <Button
+                    Command="{Binding SendCommand}"
+                    Content="Send"
+                    Visibility="{c:Binding !IsSendingOnRepeat}" />
+                <ToggleButton
+                    Command="{Binding StopCommand}"
+                    Content="Stop"
+                    Visibility="{c:Binding IsSendingOnRepeat}" />
+                <DataGrid MaxHeight="200" ItemsSource="{Binding Result}" />
             </StackPanel>
         </Grid>
     </DataTemplate>

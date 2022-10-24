@@ -1,17 +1,16 @@
 ﻿using GeneralPacketSender.Models;
 using PacketSender.Core;
 using System.Collections.ObjectModel;
-using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
 namespace GeneralPacketSender.Viewmodels
 {
-    [ObservableObject]
-    public sealed partial class SenderViewmodel : ICloneable
+    public sealed partial class SenderViewmodel : ObservableObject, ICloneable
     {
         [ObservableProperty]
-        bool isRepeatSendOn;
+        bool isOnRepeatSend;
 
         public CommunicationType CommunicationType
         {
@@ -24,7 +23,14 @@ namespace GeneralPacketSender.Viewmodels
         }
 
         [ObservableProperty]
+        uint timePeriod = 1000;
+
+        [ObservableProperty]
         private bool showSettings;
+
+
+        [ObservableProperty]
+        private bool isSendingOnRepeat;
 
         [ObservableProperty]
         [XmlIgnore]
@@ -40,6 +46,7 @@ namespace GeneralPacketSender.Viewmodels
         public SenderViewmodel()
         {
             parserList = new();
+            cancelation = new();
             PacketInfo = new PacketInfo
             {
                 Command = new Memory<byte>(new byte[] { 45, 78, 65 })
@@ -53,11 +60,46 @@ namespace GeneralPacketSender.Viewmodels
         [RelayCommand]
         private async Task Send()
         {
-            var reply = await Sendable.SendAsync(PacketInfo.Command);
-            if (ParserList.Count > 0)
+            //This routine must be improved for better time period correction, we are waiting for the response and the Total Time period will 
+            //be TimePeriod + Time Taken by the server to respond 
+            if (IsOnRepeatSend)
             {
-                Result = new ObservableCollection<ParsedData>(Parser.Parse(reply.ReplyData, ParserList));
+                IsSendingOnRepeat = true;
             }
+            do
+            {
+                var reply = await Sendable.SendAsync(PacketInfo.Command);
+                if (ParserList.Count > 0)
+                {
+                    try
+                    {
+                        Result = new ObservableCollection<ParsedData>(Parser.Parse(reply.ReplyData, ParserList));
+                    }
+                    catch (Exception)
+                    {
+                    }
+                }
+                if (IsOnRepeatSend)
+                {
+                    try
+                    {
+                        await Task.Delay((int)TimePeriod, cancelation.Token);
+                    }
+                    catch (Exception) // It will be called on Cancelation/Stop
+                    {
+
+                    }
+                }
+            } while (IsSendingOnRepeat);
+        }
+
+        CancellationTokenSource cancelation;
+
+        [RelayCommand]
+        private void Stop()
+        {
+            IsSendingOnRepeat = false;
+            cancelation.Cancel();
         }
 
         private void SetSender()

@@ -103,7 +103,18 @@
                         ItemsSource="{Binding Source={con:EnumToSource EnumType=core:CommunicationType}}"
                         SelectedItem="{Binding SelectedSendable.CommunicationType}" />
                 </StackPanel>
+                <CheckBox
+                    Margin="5,2"
+                    Content="Is Repeat"
+                    IsChecked="{Binding SelectedSendable.IsOnRepeatSend}" />
+                <hc:TextBox
+                    MinWidth="80"
+                    Margin="5,2"
+                    hc:InfoElement.Placeholder="Time Period (ms)"
+                    Text="{Binding SelectedSendable.TimePeriod}"
+                    Visibility="{c:Binding SelectedSendable.IsOnRepeatSend}" />
                 <ToggleButton x:Name="showParserCheck" Content="Add Parser" />
+
             </StackPanel>
 
         </Grid>
@@ -120,8 +131,10 @@
         <Expander
             Grid.Row="1"
             Panel.ZIndex="6"
-            IsExpanded="{Binding ElementName=showParserCheck, Path=IsChecked}">
-            <StackPanel VerticalAlignment="Top">
+            IsExpanded="{Binding ElementName=showParserCheck, Path=IsChecked}"
+            Visibility="{c:Binding ElementName=showParserCheck,
+            Path=IsChecked}">
+            <StackPanel VerticalAlignment="Top" Background="White">
                 <TextBlock Text="Parser Panel" />
                 <DataGrid ItemsSource="{Binding SelectedSendable.ParserList, Mode=TwoWay}" />
                 <Button Command="{Binding AddParserCommand}" Content="Add" />

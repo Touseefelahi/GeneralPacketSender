@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
+
+    <PackageReference Include="Avalonia" Version="11.0.0-preview5" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.0.0-preview5" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\PacketSender.Core\PacketSender.Core.csproj" />
+  </ItemGroup>
+</Project>

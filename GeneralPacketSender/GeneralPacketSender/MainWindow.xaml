@@ -9,10 +9,14 @@
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:local="clr-namespace:GeneralPacketSender"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:GeneralPacketSender.Viewmodels"
     Title="{Binding Title}"
     Width="800"
     Height="450"
     mc:Ignorable="d">
+    <Window.DataContext>
+        <vm:Mainviewmodel />
+    </Window.DataContext>
     <Window.Resources>
         <local:BytesToHexStringConverter x:Key="StringToHex" />
     </Window.Resources>
@@ -86,13 +90,13 @@
                         Margin="5,2"
                         hc:InfoElement.Placeholder="IP Address"
                         hc:ShowClearButton="True"
-                        Text="{Binding SelectedSendable.Sendable.IP}" />
+                        Text="{Binding SelectedSendable.Transceiver.IP}" />
                     <hc:TextBox
                         Width="80"
                         Margin="5,2"
                         hc:InfoElement.Placeholder="Port"
                         hc:ShowClearButton="True"
-                        Text="{Binding SelectedSendable.Sendable.Port}" />
+                        Text="{Binding SelectedSendable.Transceiver.Port}" />
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" Visibility="{c:Binding 'SelectedSendable.CommunicationType == core:CommunicationType.Serial'}">
@@ -114,17 +118,23 @@
                     Text="{Binding SelectedSendable.TimePeriod}"
                     Visibility="{c:Binding SelectedSendable.IsOnRepeatSend}" />
                 <ToggleButton x:Name="showParserCheck" Content="Add Parser" />
-
             </StackPanel>
-
         </Grid>
+        <!--<DataGrid
+            Grid.Row="1"
+            ItemsSource="{Binding Sendables}"
+            SelectedItem="{Binding SelectedSendable}">
+            <DataGrid.Columns>
+                <DataGridTextColumn
+            </DataGrid.Columns>
+        </DataGrid>-->
         <ListBox
             Grid.Row="1"
             ItemsSource="{Binding Sendables}"
             SelectedItem="{Binding SelectedSendable}">
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <WrapPanel IsItemsHost="True" />
+                    <VirtualizingStackPanel IsItemsHost="True" />
                 </ItemsPanelTemplate>
             </ListBox.ItemsPanel>
         </ListBox>
@@ -133,7 +143,7 @@
             Panel.ZIndex="6"
             IsExpanded="{Binding ElementName=showParserCheck, Path=IsChecked}"
             Visibility="{c:Binding ElementName=showParserCheck,
-            Path=IsChecked}">
+                                   Path=IsChecked}">
             <StackPanel VerticalAlignment="Top" Background="White">
                 <TextBlock Text="Parser Panel" />
                 <DataGrid ItemsSource="{Binding SelectedSendable.ParserList, Mode=TwoWay}" />

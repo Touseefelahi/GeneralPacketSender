@@ -1,11 +1,12 @@
-﻿using System.Collections;
-using System.ComponentModel;
+﻿using Avalonia.Data.Converters;
+using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.Text;
-using System.Windows.Data;
 
-namespace GeneralPacketSender
+namespace PacketParser.Converters
 {
+
     public class BytesToHexStringConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -18,7 +19,7 @@ namespace GeneralPacketSender
 
                     for (int i = 0; i < memory.Length; i++)
                     {
-                        sb.Append(memory.Span[i].ToString("X2")).Append(" ");
+                        sb.Append(memory.Span[i].ToString("X2")).Append(' ');
                     }
 
                     if (sb.Length > 2)
@@ -28,6 +29,7 @@ namespace GeneralPacketSender
             }
             catch (Exception)
             {
+                Trace.WriteLine("Failed to convert Str2Hex");
             }
             return string.Empty;
         }
@@ -51,6 +53,7 @@ namespace GeneralPacketSender
             }
             catch (Exception)
             {
+                Trace.WriteLine("Failed to convert back Str2Hex");
             }
             return value;
         }

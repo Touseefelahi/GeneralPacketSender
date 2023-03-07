@@ -1,12 +1,14 @@
-﻿using System.Text;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System.Text;
 using System.Xml.Serialization;
 
-namespace GeneralPacketSender.Models
+namespace PacketParser.Models
 {
     /// <summary>
     /// Basic packet information
     /// </summary>
-    public sealed class PacketInfo : ICloneable
+    [ObservableObject]
+    public sealed partial class PacketInfo : ICloneable
     {
         private Memory<byte> command;
         private string commandAsString = null!;
@@ -32,7 +34,7 @@ namespace GeneralPacketSender.Models
             }
         }
 
-        public string? CommandName { get; set; }
+        [ObservableProperty] string? commandName;
 
         /// <summary>
         /// It will create the deep copy of this object
@@ -78,6 +80,7 @@ namespace GeneralPacketSender.Models
                     commandAsString = firstSegment + "0" + lastChar;
                 }
                 command = new Memory<byte>(Convert.FromHexString(commandAsString));
+                OnPropertyChanged(nameof(Command));
             }
             catch (Exception)
             {

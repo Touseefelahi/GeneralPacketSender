@@ -22,7 +22,19 @@
         <Style Selector="ListBoxItem">
             <Setter Property="Padding" Value="2" />
         </Style>
-        <!--<StyleInclude Source="avares://SukiUI/Theme/Index.xaml" />-->
+
+        <Style Selector="GridSplitter">
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <Border Background="{TemplateBinding Background}" CornerRadius="5">
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Text="━━━" />
+                    </Border>
+                </ControlTemplate>
+            </Setter>
+        </Style>
         <StyleInclude Source="avares://Semi.Avalonia/Themes/Index.axaml" />
         <StyleInclude Source="avares://Semi.Avalonia.DataGrid/Index.axaml" />
     </Application.Styles>

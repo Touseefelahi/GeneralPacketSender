@@ -14,6 +14,7 @@
     d:DesignHeight="450"
     d:DesignWidth="800"
     x:DataType="vm:MainViewModel"
+    ExtendClientAreaToDecorationsHint="True"
     mc:Ignorable="d">
     <Window.DataTemplates>
         <DataTemplate DataType="{x:Type vm:SenderViewModel}">
@@ -27,18 +28,34 @@
                         Width="100"
                         VerticalAlignment="Center"
                         Text="{Binding PacketInfo.CommandName}" />
-                    <Button
-                        Width="60"
-                        Margin="5,2"
-                        Command="{Binding SendCommand}"
-                        Content="Send"
-                        IsVisible="{Binding !IsSendingOnRepeat}" />
-                    <ToggleButton
-                        Width="60"
-                        Margin="5,2"
-                        Command="{Binding StopCommand}"
-                        Content="Stop"
-                        IsVisible="{Binding IsSendingOnRepeat}" />
+                    <StackPanel IsVisible="{Binding !IsServer}">
+                        <Button
+                            Width="60"
+                            Margin="5,2"
+                            Command="{Binding SendCommand}"
+                            Content="Send"
+                            IsVisible="{Binding !IsSendingOnRepeat}" />
+                        <ToggleButton
+                            Width="60"
+                            Margin="5,2"
+                            Command="{Binding StopCommand}"
+                            Content="Stop"
+                            IsVisible="{Binding IsSendingOnRepeat}" />
+                    </StackPanel>
+                    <StackPanel IsVisible="{Binding IsServer}">
+                        <Button
+                            Width="60"
+                            Margin="5,2"
+                            Command="{Binding StartServerCommand}"
+                            Content="Start"
+                            IsVisible="{Binding !IsListening}" />
+                        <ToggleButton
+                            Width="60"
+                            Margin="5,2"
+                            Command="{Binding StopServerCommand}"
+                            Content="Stop"
+                            IsVisible="{Binding IsListening}" />
+                    </StackPanel>
                     <ListBox
                         Grid.Row="1"
                         Margin="0"
@@ -65,7 +82,7 @@
                                         Padding="0"
                                         HorizontalAlignment="Center"
                                         DockPanel.Dock="Bottom"
-                                        Text="{Binding Value, StringFormat='{}{0:G5}'}" />
+                                        Text="{Binding Value, StringFormat='{}{0:N3}'}" />
                                 </DockPanel>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
@@ -97,6 +114,11 @@
                     FontSize="11"
                     Opacity=".7"
                     Text="{Binding LastReply, Converter={StaticResource StringToHex}}" />
+                <TextBlock
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    FontSize="11"
+                    Text="{Binding TotalCount, StringFormat='{}{0:N0}'}" />
             </Grid>
         </DataTemplate>
     </Window.DataTemplates>
@@ -105,11 +127,24 @@
     <Window.Resources>
         <converter:BytesToHexStringConverter x:Key="StringToHex" />
     </Window.Resources>
-    <Grid Margin="4">
+    <Grid Margin="10,35,4,4">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
             <RowDefinition />
+            <RowDefinition />
         </Grid.RowDefinitions>
+        <StackPanel
+            Margin="0,-30,0,0"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Top"
+            Background="Transparent"
+            Orientation="Horizontal">
+            <TextBlock Text="Packet Parser" />
+            <TextBlock
+                Margin="5,3,0,0"
+                FontSize="11"
+                Text="{Binding Version}" />
+        </StackPanel>
 
         <Grid>
             <Grid.RowDefinitions>
@@ -121,7 +156,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="80" />
                 <ColumnDefinition />
-                <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="85" />
             </Grid.ColumnDefinitions>
             <TextBlock VerticalAlignment="Center" Text="Name" />
             <TextBox
@@ -135,6 +170,7 @@
             <Button
                 Grid.Row="3"
                 Grid.Column="2"
+                Classes="Danger"
                 Command="{Binding DeleteCommand}"
                 Content="Delete" />
 
@@ -171,21 +207,30 @@
                     SelectedItem="{Binding DefaultSendable.Transceiver.CommunicationType}" />
 
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Margin="10,5" Text="IP" />
-                    <TextBox Text="{Binding DefaultSendable.Transceiver.IP}" />
+                    <CheckBox Content="Is Server" IsChecked="{Binding DefaultSendable.IsServer}" />
+                    <TextBlock
+                        Margin="10,5"
+                        IsVisible="{Binding !DefaultSendable.IsServer}"
+                        Text="IP" />
+                    <TextBox IsVisible="{Binding !DefaultSendable.IsServer}" Text="{Binding DefaultSendable.Transceiver.IP}" />
                     <TextBlock Margin="10,5" Text="Port" />
                     <TextBox Text="{Binding DefaultSendable.Transceiver.Port}" />
                 </StackPanel>
 
-                <CheckBox
-                    Margin="5,2"
-                    Content="Continous"
-                    IsChecked="{Binding DefaultSendable.IsOnRepeatSend}" />
-                <TextBox IsVisible="{Binding DefaultSendable.IsOnRepeatSend}" Text="{Binding DefaultSendable.TimePeriod}" />
-                <TextBlock
-                    Margin="2"
-                    IsVisible="{Binding DefaultSendable.IsOnRepeatSend}"
-                    Text="ms" />
+                <StackPanel
+                    VerticalAlignment="Center"
+                    IsVisible="{Binding !DefaultSendable.IsServer}"
+                    Orientation="Horizontal">
+                    <CheckBox
+                        Margin="5,2"
+                        Content="Continous"
+                        IsChecked="{Binding DefaultSendable.IsOnRepeatSend}" />
+                    <TextBox IsVisible="{Binding DefaultSendable.IsOnRepeatSend}" Text="{Binding DefaultSendable.TimePeriod}" />
+                    <TextBlock
+                        Margin="2"
+                        IsVisible="{Binding DefaultSendable.IsOnRepeatSend}"
+                        Text="ms" />
+                </StackPanel>
             </StackPanel>
 
             <StackPanel
@@ -212,7 +257,7 @@
             ExpandDirection="Left"
             Header="Parser"
             ZIndex="5">
-            <Grid>
+            <Grid Margin="0" Background="{StaticResource SemiColorBackground1}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
                     <RowDefinition Height="auto" />
@@ -240,6 +285,7 @@
                     <Button
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Center"
+                        Classes="Danger"
                         Command="{Binding DeleteParserCommand}"
                         Content="Delete" />
                     <Button
@@ -253,8 +299,8 @@
         <ListBox
             Name="SendablesListBox"
             Grid.Row="1"
-            Margin="0,0,56,0"
-            Padding="0"
+            Margin="2,2,56,2"
+            Padding="1"
             Items="{Binding Sendables}"
             SelectedItem="{Binding SelectedSendable}">
             <ListBox.ItemsPanel>
@@ -262,11 +308,24 @@
                     <VirtualizingStackPanel Margin="0" Orientation="Vertical" />
                 </ItemsPanelTemplate>
             </ListBox.ItemsPanel>
-            <i:Interaction.Behaviors>
+            <!--<i:Interaction.Behaviors>
                 <ia:EventTriggerBehavior EventName="DoubleTapped">
                     <ia:InvokeCommandAction Command="{Binding EditCommand}" />
                 </ia:EventTriggerBehavior>
-            </i:Interaction.Behaviors>
+            </i:Interaction.Behaviors>-->
         </ListBox>
+        <GridSplitter
+            Grid.Row="2"
+            Width="100"
+            Height="10"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Top"
+            ResizeDirection="Rows" />
+        <DataGrid
+            Name="LogGrid"
+            Grid.Row="2"
+            AutoGenerateColumns="True"
+            IsReadOnly="True"
+            Items="{Binding Logger.Logs}" />
     </Grid>
 </Window>

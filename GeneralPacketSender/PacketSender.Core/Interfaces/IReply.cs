@@ -1,4 +1,5 @@
-﻿namespace PacketSender.Core
+﻿
+namespace PacketSender.Core
 {
     /// <summary>
     /// This is general reply data for any type of communication

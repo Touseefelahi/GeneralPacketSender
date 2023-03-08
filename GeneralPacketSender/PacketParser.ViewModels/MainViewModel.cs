@@ -10,24 +10,46 @@ namespace PacketParser.ViewModels
     public sealed partial class MainViewModel : ObservableObject
     {
         private string fileName = "commandList.xml";
+        private string defaultFileName = "defaultCommandList.xml";
 
+        [ObservableProperty] private string version = "v1.0.0";
+        [ObservableProperty] private string title = "Packet Parser";
         [ObservableProperty] private SenderViewModel selectedSendable = null!;
         [ObservableProperty] private ParserInfo selectedParser = null!;
         [ObservableProperty] private ObservableCollection<SenderViewModel> sendables = null!;
-
         [ObservableProperty] private SenderViewModel defaultSendable = null!;
         [ObservableProperty] private bool showAddPanel;
-
-        [ObservableProperty] private string title = "Packet Parser";
         [ObservableProperty] private bool isEditing;
+        [ObservableProperty] private ILogger logger;
 
         private XmlAttributeOverrides xOver = null!;
         private SenderViewModel temporarySendable = null!;
-        public MainViewModel()
+
+        public IServiceProvider ServiceProvider { get; }
+
+        public MainViewModel(IServiceProvider serviceProvider)
         {
-            DefaultSendable = new SenderViewModel();
+            ServiceProvider = serviceProvider;
+            Services.SetProvider(serviceProvider);
+            Logger = (ILogger)ServiceProvider.GetService(typeof(ILogger));
             SetXmlOverrides();
-            LoadLastConfiguration();
+            LoadConfiguration(fileName);
+            LoadDefaultSendable();
+        }
+
+        private void LoadDefaultSendable()
+        {
+            try
+            {
+                using XmlReader reader = XmlReader.Create(defaultFileName);
+                XmlSerializer des = new(typeof(SenderViewModel), xOver);
+                DefaultSendable = (SenderViewModel)des.Deserialize(reader);
+            }
+            catch (Exception)
+            {
+
+            }
+            DefaultSendable ??= new();
         }
 
         [RelayCommand]
@@ -55,18 +77,32 @@ namespace PacketParser.ViewModels
 
 
         [RelayCommand]
-        private void ImportPackets()
+        private async Task ImportPackets()
         {
-
+            var dialogService = (IDialogService)ServiceProvider.GetService(typeof(IDialogService));
+            var fileName = await dialogService.OpenFileDialog();
+            LoadConfiguration(fileName);
         }
 
         [RelayCommand]
         private void SaveXml()
         {
-            XmlWriterSettings xmlWriterSettings = new() { Indent = true };
-            using XmlWriter writer = XmlWriter.Create(fileName, xmlWriterSettings);
-            XmlSerializer serializer = new(typeof(ObservableCollection<SenderViewModel>), xOver);
-            serializer.Serialize(writer, sendables);
+            try
+            {
+                XmlWriterSettings xmlWriterSettings = new() { Indent = true };
+                using XmlWriter writer = XmlWriter.Create(fileName, xmlWriterSettings);
+                XmlSerializer serializer = new(typeof(ObservableCollection<SenderViewModel>), xOver);
+                serializer.Serialize(writer, sendables);
+                Logger.Info($"Command list saved");
+
+                using XmlWriter writer2 = XmlWriter.Create(defaultFileName, xmlWriterSettings);
+                XmlSerializer serializer2 = new(typeof(SenderViewModel), xOver);
+                serializer2.Serialize(writer2, DefaultSendable);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
         }
 
         [RelayCommand]
@@ -81,21 +117,20 @@ namespace PacketParser.ViewModels
             SelectedSendable.ParserList.Remove(SelectedParser);
         }
 
-        private void LoadLastConfiguration()
+        private void LoadConfiguration(string fileName)
         {
             try
             {
                 using XmlReader reader = XmlReader.Create(fileName);
                 XmlSerializer des = new(typeof(ObservableCollection<SenderViewModel>), xOver);
-                sendables = (ObservableCollection<SenderViewModel>)des.Deserialize(reader);
+                Sendables = (ObservableCollection<SenderViewModel>)des.Deserialize(reader);
+                Logger.Info($"Configuration Loaded {Path.GetFileName(fileName)}");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Logger.Error(ex);
             }
-            if (sendables is null)
-            {
-                sendables = new ObservableCollection<SenderViewModel>();
-            }
+            sendables ??= new();
         }
         private void SetXmlOverrides()
         {
@@ -105,18 +140,20 @@ namespace PacketParser.ViewModels
                 XmlIgnore = true
             };
             xOver.Add(typeof(SenderViewModel), nameof(SenderViewModel.Result), attributes);
+            xOver.Add(typeof(SenderViewModel), nameof(SenderViewModel.IsListening), attributes);
             xOver.Add(typeof(SenderViewModel), nameof(SenderViewModel.IsSendingOnRepeat), attributes);
         }
 
         [RelayCommand]
         private void Send()
         {
-            SelectedSendable.SendCommand.Execute(null);
+            DefaultSendable.SendCommand.Execute(null);
         }
 
         [RelayCommand]
         private void Delete()
         {
+            Logger.Info($"Removing {SelectedSendable.PacketInfo.CommandName} Control");
             sendables.Remove(SelectedSendable);
             SaveXml();
         }

@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using Avalonia.Threading;
+using CommunityToolkit.Mvvm.ComponentModel;
 using PacketSender.Core;
 using System;
 using System.Collections.ObjectModel;
@@ -40,8 +41,11 @@ namespace PacketParser.Services
 
         public void Log(string message, LogLevel logLevel = LogLevel.Info)
         {
-            Logs.Add(new Log(DateTime.Now.TimeOfDay, logLevel, message));
-            OnPropertyChanged(nameof(Log));
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                Logs.Add(new Log(DateTime.Now.TimeOfDay, logLevel, message));
+                OnPropertyChanged(nameof(Log));
+            });
         }
     }
 }

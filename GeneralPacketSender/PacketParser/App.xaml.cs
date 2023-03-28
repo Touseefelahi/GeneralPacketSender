@@ -3,18 +3,20 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Live.Avalonia;
-using PacketParser.ViewModels;
-using System;
 using Microsoft.Extensions.DependencyInjection;
 using PacketParser.Services;
+using PacketParser.ViewModels;
 using PacketSender.Core;
+using System;
 
 namespace PacketParser
 {
     public partial class App : Application, ILiveView
     {
-        public IServiceProvider Services { get; private set; } = null!;
         public new static App Current => (App)Application.Current!;
+        public IServiceProvider Services { get; private set; } = null!;
+        internal static Window Window { get; private set; } = null!;
+
         public object CreateView(Window window)
         {
             throw new System.NotImplementedException();
@@ -24,14 +26,6 @@ namespace PacketParser
         {
             Services = ConfigureServices();
             AvaloniaXamlLoader.Load(this);
-        }
-        internal static Window Window { get; private set; } = null!;
-        private IServiceProvider ConfigureServices()
-        {
-            var services = new ServiceCollection();
-            services.AddTransient<IDialogService, DialogService>();
-            services.AddSingleton<ILogger, LoggerService>();
-            return services.BuildServiceProvider();
         }
 
         public override void OnFrameworkInitializationCompleted()
@@ -59,6 +53,14 @@ namespace PacketParser
                 }
             };
             base.OnFrameworkInitializationCompleted();
+        }
+
+        private IServiceProvider ConfigureServices()
+        {
+            var services = new ServiceCollection();
+            services.AddTransient<IDialogService, DialogService>();
+            services.AddSingleton<ILogger, LoggerService>();
+            return services.BuildServiceProvider();
         }
     }
 }

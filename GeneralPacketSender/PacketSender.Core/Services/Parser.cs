@@ -87,7 +87,7 @@ namespace PacketSender.Core
         private static T Get<T>(ReadOnlyMemory<byte> memory, int startIndex) where T : struct
         {
             int length = Marshal.SizeOf(typeof(T));
-            if (startIndex + length >= memory.Length)
+            if (startIndex + length > memory.Length)
             {
                 throw new OverflowException($"Length of bytes is not enough Index: {startIndex} with" +
                     $" DataLength: {length} and Array Length: {memory.Length}");

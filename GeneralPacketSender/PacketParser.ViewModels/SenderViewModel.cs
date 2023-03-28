@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using Avalonia.Threading;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PacketParser.Models;
 using PacketSender.Core;
@@ -15,6 +16,7 @@ namespace PacketParser.ViewModels
         [ObservableProperty] private PacketInfo packetInfo = null!;
         [ObservableProperty] private ObservableCollection<ParserInfo> parserList;
         [ObservableProperty] private ObservableCollection<ParsedData> result = null!;
+        [ObservableProperty] private ObservableCollection<ObservableCollection<ParsedData>> results = null!;
         [ObservableProperty] private Transceiver transceiver;
         [ObservableProperty] private bool showSettings;
         [ObservableProperty] private uint timePeriod = 1000;
@@ -43,6 +45,7 @@ namespace PacketParser.ViewModels
                 DialogService = dialogService;
             }
             Logger = (ILogger)Services.ServiceProvider.GetService(typeof(ILogger));
+            results = new();
         }
 
         public object Clone()
@@ -145,6 +148,10 @@ namespace PacketParser.ViewModels
                 try
                 {
                     Result = new ObservableCollection<ParsedData>(Parser.Parse(e.RawBytes, ParserList));
+                    Dispatcher.UIThread.Post(() =>
+                    {
+                        Results.Add(Result);
+                    });
                 }
                 catch (Exception ex)
                 {

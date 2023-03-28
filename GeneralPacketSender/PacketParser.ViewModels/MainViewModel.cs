@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using PacketSender.Core;
 using System.Collections.ObjectModel;
+using System.Reflection;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -12,7 +13,7 @@ namespace PacketParser.ViewModels
         private string fileName = "commandList.xml";
         private string defaultFileName = "defaultCommandList.xml";
 
-        [ObservableProperty] private string version = "v1.0.0";
+        [ObservableProperty] private string version;
         [ObservableProperty] private string title = "Packet Parser";
         [ObservableProperty] private SenderViewModel selectedSendable = null!;
         [ObservableProperty] private ParserInfo selectedParser = null!;
@@ -20,12 +21,10 @@ namespace PacketParser.ViewModels
         [ObservableProperty] private SenderViewModel defaultSendable = null!;
         [ObservableProperty] private bool showAddPanel;
         [ObservableProperty] private bool isEditing;
-        [ObservableProperty] private ILogger logger;
+        [ObservableProperty] private ILogger logger = null!;
 
         private XmlAttributeOverrides xOver = null!;
         private SenderViewModel temporarySendable = null!;
-
-        public IServiceProvider ServiceProvider { get; }
 
         public MainViewModel(IServiceProvider serviceProvider)
         {
@@ -35,7 +34,15 @@ namespace PacketParser.ViewModels
             SetXmlOverrides();
             LoadConfiguration(fileName);
             LoadDefaultSendable();
+            SelectedSendable = DefaultSendable;
+            var version = Assembly.GetExecutingAssembly().GetName().Version?.ToString();
+            if (version is not null)
+            {
+                Version = version;
+            }
         }
+
+        public IServiceProvider ServiceProvider { get; }
 
         private void LoadDefaultSendable()
         {
@@ -45,9 +52,9 @@ namespace PacketParser.ViewModels
                 XmlSerializer des = new(typeof(SenderViewModel), xOver);
                 DefaultSendable = (SenderViewModel)des.Deserialize(reader);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                Logger.Error(ex);
             }
             DefaultSendable ??= new();
         }
@@ -74,7 +81,6 @@ namespace PacketParser.ViewModels
             }
             IsEditing = !IsEditing;
         }
-
 
         [RelayCommand]
         private async Task ImportPackets()
@@ -108,13 +114,19 @@ namespace PacketParser.ViewModels
         [RelayCommand]
         private void AddParser()
         {
-            SelectedSendable.ParserList.Add(new ParserInfo());
+            if (SelectedSendable != null)
+            {
+                SelectedSendable.ParserList.Add(new ParserInfo());
+            }
         }
 
         [RelayCommand]
         private void DeleteParser()
         {
-            SelectedSendable.ParserList.Remove(SelectedParser);
+            if (SelectedParser != null && SelectedSendable != null)
+            {
+                SelectedSendable.ParserList.Remove(SelectedParser);
+            }
         }
 
         private void LoadConfiguration(string fileName)
@@ -132,6 +144,7 @@ namespace PacketParser.ViewModels
             }
             sendables ??= new();
         }
+
         private void SetXmlOverrides()
         {
             xOver = new();
@@ -140,6 +153,7 @@ namespace PacketParser.ViewModels
                 XmlIgnore = true
             };
             xOver.Add(typeof(SenderViewModel), nameof(SenderViewModel.Result), attributes);
+            xOver.Add(typeof(SenderViewModel), nameof(SenderViewModel.Results), attributes);
             xOver.Add(typeof(SenderViewModel), nameof(SenderViewModel.IsListening), attributes);
             xOver.Add(typeof(SenderViewModel), nameof(SenderViewModel.IsSendingOnRepeat), attributes);
         }
@@ -153,9 +167,12 @@ namespace PacketParser.ViewModels
         [RelayCommand]
         private void Delete()
         {
-            Logger.Info($"Removing {SelectedSendable.PacketInfo.CommandName} Control");
-            sendables.Remove(SelectedSendable);
-            SaveXml();
+            if (SelectedSendable != null && sendables.Contains(SelectedSendable))
+            {
+                Logger.Info($"Removing {SelectedSendable.PacketInfo.CommandName} Control");
+                sendables.Remove(SelectedSendable);
+                SaveXml();
+            }
         }
     }
 }

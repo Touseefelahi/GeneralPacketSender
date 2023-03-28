@@ -1,5 +1,7 @@
 using Avalonia.Controls;
 using PacketParser.ViewModels;
+using System.Reflection;
+using System;
 
 namespace PacketParser
 {
@@ -8,13 +10,11 @@ namespace PacketParser
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new MainViewModel(App.Current.Services);
-
-            //Task.Run(async () =>
-            //{
-            //    await Task.Delay(5000);
-            //           LogGrid.
-            //});
+            var version = (Assembly.GetExecutingAssembly().GetName().Version?.ToString()) ?? throw new FieldAccessException("Set version");
+            DataContext = new MainViewModel(App.Current.Services)
+            {
+                Version = version
+            };
         }
     }
 }

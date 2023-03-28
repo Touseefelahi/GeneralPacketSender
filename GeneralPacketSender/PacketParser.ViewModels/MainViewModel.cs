@@ -2,7 +2,6 @@
 using CommunityToolkit.Mvvm.Input;
 using PacketSender.Core;
 using System.Collections.ObjectModel;
-using System.Reflection;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -35,11 +34,6 @@ namespace PacketParser.ViewModels
             LoadConfiguration(fileName);
             LoadDefaultSendable();
             SelectedSendable = DefaultSendable;
-            var version = Assembly.GetExecutingAssembly().GetName().Version?.ToString();
-            if (version is not null)
-            {
-                Version = version;
-            }
         }
 
         public IServiceProvider ServiceProvider { get; }

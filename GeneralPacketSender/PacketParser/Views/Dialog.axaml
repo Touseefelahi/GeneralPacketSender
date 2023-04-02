@@ -4,26 +4,38 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Name="window"
     Title="Dialog"
     MinWidth="300"
     MinHeight="80"
+    Background="{StaticResource WindowDefaultBackground}"
     CanResize="False"
+    ExtendClientAreaToDecorationsHint="True"
     ShowInTaskbar="False"
     SizeToContent="WidthAndHeight"
+    TransparencyLevelHint="Blur"
     WindowStartupLocation="CenterOwner"
     mc:Ignorable="d">
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="auto" />
-        </Grid.RowDefinitions>
-        <TextBlock Name="Message" Margin="5" />
-        <Button
-            Grid.Row="1"
-            Margin="5"
-            HorizontalAlignment="Right"
-            Click="OkPressed"
-            Content="Ok" />
-    </Grid>
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition />
+      <RowDefinition Height="40" />
+    </Grid.RowDefinitions>
+    <TextBlock
+        Margin="8,8,0,0"
+        VerticalAlignment="Top"
+        Text="{Binding Title, ElementName=window}" />
+    <TextBlock
+        Name="Message"
+        Margin="5,40"
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center" />
+    <Button
+        Grid.Row="1"
+        Margin="5"
+        HorizontalAlignment="Right"
+        Click="OkPressed"
+        Content="Ok" />
+  </Grid>
 </Window>

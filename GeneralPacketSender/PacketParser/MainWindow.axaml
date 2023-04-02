@@ -2,7 +2,6 @@
     x:Class="PacketParser.MainWindow"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
     xmlns:converter="clr-namespace:PacketParser.Converters"
     xmlns:core="clr-namespace:PacketSender.Core;assembly=PacketSender.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -11,268 +10,137 @@
     xmlns:icon="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="clr-namespace:PacketParser.ViewModels;assembly=PacketParser.ViewModels"
+    Name="window"
     Title="Packet Parser"
     MinWidth="960"
     MinHeight="400"
     d:DesignHeight="450"
     d:DesignWidth="800"
     x:DataType="vm:MainViewModel"
+    Background="{StaticResource WindowDefaultBackground}"
     ExtendClientAreaToDecorationsHint="True"
     Icon="/Assets/decode.ico"
+    TransparencyLevelHint="None"
     mc:Ignorable="d">
 
-  <Grid Margin="10,35,4,4">
-    <Grid.RowDefinitions>
-      <RowDefinition Height="auto" />
-      <RowDefinition />
-      <RowDefinition />
-    </Grid.RowDefinitions>
-    <Border
-        Grid.Row="0"
-        Grid.ColumnSpan="3"
-        BorderBrush="{StaticResource SemiColorText2}"
-        BorderThickness="0,0,0,.51"
-        ZIndex="5" />
-    <Border
-        Grid.Row="1"
-        Grid.ColumnSpan="3"
-        BorderBrush="{StaticResource SemiColorText2}"
-        BorderThickness="0,0,0,.51"
-        ZIndex="5" />
-    <!--  Title  -->
-    <StackPanel
-        Margin="3,-30,0,0"
-        HorizontalAlignment="Left"
-        VerticalAlignment="Top"
-        Background="Transparent"
-        Orientation="Horizontal">
-      <Image
-          Width="24"
-          Height="24"
-          VerticalAlignment="Center"
-          Source="/Assets/decode.ico" />
-      <TextBlock Margin="10,0,0,0" Text="Packet Parser" />
-      <TextBlock
-          Margin="5,3,0,0"
-          FontSize="11"
-          Text="{Binding Version}" />
-    </StackPanel>
-
-    <Grid>
-      <Grid.RowDefinitions>
-        <RowDefinition />
-        <RowDefinition />
-        <RowDefinition Height="auto" />
-        <RowDefinition />
-      </Grid.RowDefinitions>
+  <Panel>
+    <Grid Margin="10,35,4,4">
       <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="80" />
+        <ColumnDefinition Width="20" />
         <ColumnDefinition />
-        <ColumnDefinition Width="85" />
       </Grid.ColumnDefinitions>
 
-      <TextBlock VerticalAlignment="Center" Text="Name" />
-      <TextBox
-          Grid.Column="1"
-          Text="{Binding DefaultSendable.PacketInfo.CommandName}"
-          Watermark="Command Name" />
-      <!--<Button
-          Grid.Column="2"
-          Command="{Binding SendCommand}"
-          Content="Send" />-->
-      <StackPanel Grid.Column="2">
-        <StackPanel IsVisible="{Binding !DefaultSendable.IsServer}">
-          <Button
-              Command="{Binding DefaultSendable.SendCommand}"
-              Content="Send"
-              IsVisible="{Binding !DefaultSendable.IsSendingOnRepeat}" />
-          <ToggleButton
-              Command="{Binding DefaultSendable.StopCommand}"
-              Content="Stop"
-              IsVisible="{Binding DefaultSendable.IsSendingOnRepeat}" />
-        </StackPanel>
-        <StackPanel IsVisible="{Binding DefaultSendable.IsServer}">
-          <Button
-              Command="{Binding DefaultSendable.StartServerCommand}"
-              Content="Start"
-              IsVisible="{Binding !DefaultSendable.IsListening}" />
-          <ToggleButton
-              Command="{Binding DefaultSendable.StopServerCommand}"
-              Content="Stop"
-              IsVisible="{Binding DefaultSendable.IsListening}" />
-        </StackPanel>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="auto" />
+        <RowDefinition />
+        <RowDefinition />
+      </Grid.RowDefinitions>
+
+      <StackPanel
+          Grid.RowSpan="3"
+          Margin="-10,0,0,0"
+          HorizontalAlignment="Center">
+        <Button
+            Margin="1,8"
+            Padding="0"
+            icon:Attached.Icon="fa-solid fa-square-plus"
+            Background="Transparent"
+            Command="{Binding AddNewSenderCommand}"
+            FontSize="20"
+            ToolTip.Tip="Add New Command" />
+        <Button
+            Margin="1,8"
+            Padding="0"
+            icon:Attached.Icon="fa-solid fa-file-import"
+            Background="Transparent"
+            Command="{Binding ImportPacketsCommand}"
+            FontSize="20"
+            ToolTip.Tip="Import Commands" />
+        <Button
+            Margin="1,8"
+            Padding="0"
+            icon:Attached.Icon="fa-regular fa-trash-can"
+            Background="Transparent"
+            Command="{Binding DeleteSenderCommand}"
+            FontSize="20"
+            ToolTip.Tip="Delete Command" />
       </StackPanel>
 
-      <Button
-          Grid.Row="3"
-          Grid.Column="2"
-          Classes="Danger"
-          Command="{Binding DeleteCommand}"
-          Content="Delete" />
+      <Border
+          Grid.RowSpan="3"
+          BorderBrush="{StaticResource SemiColorText2}"
+          BorderThickness="0,0,.51,0"
+          ZIndex="5" />
 
-      <TextBlock
-          Grid.Row="1"
-          VerticalAlignment="Center"
-          Text="Command" />
-      <TextBox
+      <Border
+          Grid.Row="0"
+          Grid.Column="0"
+          Grid.ColumnSpan="3"
+          BorderBrush="{StaticResource SemiColorText2}"
+          BorderThickness="0,0,0,.51"
+          ZIndex="5" />
+      <Border
           Grid.Row="1"
           Grid.Column="1"
-          Text="{Binding DefaultSendable.PacketInfo.CommandAsString}"
-          Watermark="Command Hex" />
-      <TextBlock
+          Grid.ColumnSpan="3"
+          BorderBrush="{StaticResource SemiColorText2}"
+          BorderThickness="0,0,0,.51"
+          ZIndex="5" />
+      <!--  Title  -->
+      <StackPanel
+          Margin="3,-30,0,0"
+          HorizontalAlignment="Left"
+          VerticalAlignment="Top"
+          Background="Transparent"
+          Orientation="Horizontal">
+        <Image
+            Width="24"
+            Height="24"
+            VerticalAlignment="Center"
+            Source="/Assets/decode.ico" />
+        <TextBlock Margin="10,0,0,0" Text="{Binding Title, ElementName=window}" />
+        <TextBlock
+            Margin="5,3,0,0"
+            FontSize="11"
+            Text="{Binding Version}" />
+      </StackPanel>
+
+      <ListBox
+          Name="SendablesListBox"
+          Grid.Row="1"
+          Grid.Column="1"
+          Margin="2"
+          Padding="1"
+          Items="{Binding Sendables}"
+          SelectedItem="{Binding SelectedSendable}">
+        <ListBox.ItemsPanel>
+          <ItemsPanelTemplate>
+            <VirtualizingStackPanel Margin="0" Orientation="Vertical" />
+          </ItemsPanelTemplate>
+        </ListBox.ItemsPanel>
+        <i:Interaction.Behaviors>
+          <ia:EventTriggerBehavior EventName="DoubleTapped">
+            <ia:InvokeCommandAction Command="{Binding EditCommand}" />
+          </ia:EventTriggerBehavior>
+        </i:Interaction.Behaviors>
+      </ListBox>
+
+      <DataGrid
+          Name="LogGrid"
           Grid.Row="2"
           Grid.Column="1"
-          Margin="15,0,0,0"
-          Padding="0"
+          AutoGenerateColumns="True"
+          IsReadOnly="True"
+          Items="{Binding Logger.Logs}" />
+
+      <GridSplitter
+          Grid.Row="2"
+          Grid.Column="1"
+          Width="100"
+          Height="10"
+          HorizontalAlignment="Center"
           VerticalAlignment="Top"
-          FontSize="8"
-          Text="{Binding DefaultSendable.PacketInfo.Command, Converter={StaticResource StringToHex}}" />
-      <Button
-          Grid.Row="1"
-          Grid.Column="2"
-          Command="{Binding AddNewControlCommand}"
-          Content="Save" />
-      <TextBlock Grid.Row="3" Text="Type" />
-      <StackPanel
-          Grid.Row="3"
-          Grid.Column="1"
-          Orientation="Horizontal">
-        <ComboBox
-            Width="80"
-            Items="{Binding Source={converter:EnumToSource EnumType=core:CommunicationType}}"
-            SelectedItem="{Binding DefaultSendable.Transceiver.CommunicationType}" />
-
-        <StackPanel Orientation="Horizontal">
-          <CheckBox Content="Is Server" IsChecked="{Binding DefaultSendable.IsServer}" />
-          <TextBlock
-              Margin="10,5"
-              IsVisible="{Binding !DefaultSendable.IsServer}"
-              Text="IP" />
-          <TextBox
-              MinWidth="130"
-              IsVisible="{Binding !DefaultSendable.IsServer}"
-              Text="{Binding DefaultSendable.Transceiver.IP}" />
-          <TextBlock Margin="10,5" Text="Port" />
-          <TextBox MinWidth="60" Text="{Binding DefaultSendable.Transceiver.Port}" />
-        </StackPanel>
-
-        <StackPanel
-            VerticalAlignment="Center"
-            IsVisible="{Binding !DefaultSendable.IsServer}"
-            Orientation="Horizontal">
-          <CheckBox
-              Margin="5,2"
-              Content="Continous"
-              IsChecked="{Binding DefaultSendable.IsOnRepeatSend}" />
-          <TextBox
-              MinWidth="50"
-              IsVisible="{Binding DefaultSendable.IsOnRepeatSend}"
-              Text="{Binding DefaultSendable.TimePeriod}" />
-          <TextBlock
-              Margin="2"
-              IsVisible="{Binding DefaultSendable.IsOnRepeatSend}"
-              Text="ms" />
-        </StackPanel>
-      </StackPanel>
-
-      <StackPanel
-          Grid.Row="4"
-          Grid.Column="1"
-          HorizontalAlignment="Right"
-          Orientation="Horizontal">
-        <Button Command="{Binding ImportPacketsCommand}" Content="Import" />
-        <Button
-            Command="{Binding EditCommand}"
-            Content="Edit"
-            IsVisible="{Binding !IsEditing}" />
-        <Button
-            Command="{Binding EditCommand}"
-            Content="Update"
-            IsVisible="{Binding IsEditing}" />
-      </StackPanel>
+          ResizeDirection="Rows" />
     </Grid>
-    <Expander
-        Grid.Row="1"
-        HorizontalAlignment="Right"
-        VerticalAlignment="Stretch"
-        VerticalContentAlignment="Stretch"
-        ExpandDirection="Left"
-        Header="Parser"
-        ZIndex="5">
-      <Grid Margin="0" Background="{StaticResource SemiColorBackground1}">
-        <Grid.RowDefinitions>
-          <RowDefinition Height="*" />
-          <RowDefinition Height="auto" />
-        </Grid.RowDefinitions>
-        <DataGrid
-            AutoGenerateColumns="False"
-            Items="{Binding SelectedSendable.ParserList, Mode=TwoWay}"
-            SelectedItem="{Binding SelectedParser}">
-          <DataGrid.Columns>
-            <DataGridTemplateColumn Header="DataType">
-              <DataGridTemplateColumn.CellTemplate>
-                <DataTemplate DataType="core:CommunicationType">
-                  <ComboBox
-                      Width="100"
-                      Items="{Binding Source={converter:EnumToSource EnumType=core:DataType}}"
-                      SelectedItem="{Binding DataType}" />
-                </DataTemplate>
-              </DataGridTemplateColumn.CellTemplate>
-            </DataGridTemplateColumn>
-            <DataGridTextColumn Binding="{Binding Name}" Header="Name" />
-            <DataGridTextColumn Binding="{Binding StartIndex}" Header="Start Index" />
-          </DataGrid.Columns>
-        </DataGrid>
-        <DockPanel Grid.Row="2">
-          <Button
-              HorizontalAlignment="Stretch"
-              HorizontalContentAlignment="Center"
-              Classes="Danger"
-              Command="{Binding DeleteParserCommand}"
-              Content="Delete" />
-          <Button
-              HorizontalAlignment="Stretch"
-              HorizontalContentAlignment="Center"
-              Command="{Binding AddParserCommand}"
-              Content="Add" />
-        </DockPanel>
-      </Grid>
-    </Expander>
-    <ListBox
-        Name="SendablesListBox"
-        Grid.Row="1"
-        Margin="2,2,56,2"
-        Padding="1"
-        Items="{Binding Sendables}"
-        SelectedItem="{Binding SelectedSendable}">
-      <ListBox.ItemsPanel>
-        <ItemsPanelTemplate>
-          <VirtualizingStackPanel Margin="0" Orientation="Vertical" />
-        </ItemsPanelTemplate>
-      </ListBox.ItemsPanel>
-      <i:Interaction.Behaviors>
-        <ia:EventTriggerBehavior EventName="DoubleTapped">
-          <ia:InvokeCommandAction Command="{Binding EditCommand}" />
-        </ia:EventTriggerBehavior>
-      </i:Interaction.Behaviors>
-    </ListBox>
-    <!--<DataGrid
-            Grid.Row="1"
-            Items="{Binding Sendables}" />-->
-
-    <DataGrid
-        Name="LogGrid"
-        Grid.Row="2"
-        AutoGenerateColumns="True"
-        IsReadOnly="True"
-        Items="{Binding Logger.Logs}" />
-
-    <GridSplitter
-        Grid.Row="2"
-        Width="100"
-        Height="10"
-        HorizontalAlignment="Center"
-        VerticalAlignment="Top"
-        ResizeDirection="Rows" />
-  </Grid>
+  </Panel>
 </Window>

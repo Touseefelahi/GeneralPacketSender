@@ -14,26 +14,24 @@ namespace PacketParser.ViewModels
 
         [ObservableProperty] private string version;
         [ObservableProperty] private string title = "Packet Parser";
-        [ObservableProperty] private SenderViewModel selectedSendable = null!;
         [ObservableProperty] private ParserInfo selectedParser = null!;
         [ObservableProperty] private ObservableCollection<SenderViewModel> sendables = null!;
         [ObservableProperty] private SenderViewModel defaultSendable = null!;
-        [ObservableProperty] private bool showAddPanel;
-        [ObservableProperty] private bool isEditing;
+        [ObservableProperty] private SenderViewModel selectedSendable = null!;
         [ObservableProperty] private ILogger logger = null!;
 
         private XmlAttributeOverrides xOver = null!;
-        private SenderViewModel temporarySendable = null!;
+        private IDialogService dialogService = null!;
 
         public MainViewModel(IServiceProvider serviceProvider)
         {
             ServiceProvider = serviceProvider;
             Services.SetProvider(serviceProvider);
             Logger = (ILogger)ServiceProvider.GetService(typeof(ILogger));
+            dialogService = (IDialogService)ServiceProvider.GetService(typeof(IDialogService));
             SetXmlOverrides();
             LoadConfiguration(fileName);
             LoadDefaultSendable();
-            SelectedSendable = DefaultSendable;
         }
 
         public IServiceProvider ServiceProvider { get; }
@@ -54,32 +52,37 @@ namespace PacketParser.ViewModels
         }
 
         [RelayCommand]
-        private void AddNewControl()
+        private async Task AddNewSender()
         {
-            sendables.Add((SenderViewModel)DefaultSendable.Clone());
+            var newSender = new SenderViewModel();
+            await dialogService.EditCommand(newSender);
+            sendables.Add(newSender);
             SaveXml();
         }
 
         [RelayCommand]
-        private void Edit()
+        private async Task Edit()
         {
-            if (IsEditing) //Update
+            if (SelectedSendable is not null)
             {
-                DefaultSendable = temporarySendable;
+                await dialogService.EditCommand(SelectedSendable);
                 SaveXml();
             }
-            else //Edit Mode
+        }
+
+        [RelayCommand]
+        private void DeleteSender()
+        {
+            if (SelectedSendable is not null)
             {
-                temporarySendable = DefaultSendable;
-                DefaultSendable = SelectedSendable;
+                sendables.Remove(SelectedSendable);
+                SaveXml();
             }
-            IsEditing = !IsEditing;
         }
 
         [RelayCommand]
         private async Task ImportPackets()
         {
-            var dialogService = (IDialogService)ServiceProvider.GetService(typeof(IDialogService));
             var fileName = await dialogService.OpenFileDialog();
             LoadConfiguration(fileName);
         }
@@ -102,24 +105,6 @@ namespace PacketParser.ViewModels
             catch (Exception ex)
             {
                 Logger.Error(ex);
-            }
-        }
-
-        [RelayCommand]
-        private void AddParser()
-        {
-            if (SelectedSendable != null)
-            {
-                SelectedSendable.ParserList.Add(new ParserInfo());
-            }
-        }
-
-        [RelayCommand]
-        private void DeleteParser()
-        {
-            if (SelectedParser != null && SelectedSendable != null)
-            {
-                SelectedSendable.ParserList.Remove(SelectedParser);
             }
         }
 
@@ -156,17 +141,6 @@ namespace PacketParser.ViewModels
         private void Send()
         {
             DefaultSendable.SendCommand.Execute(null);
-        }
-
-        [RelayCommand]
-        private void Delete()
-        {
-            if (SelectedSendable != null && sendables.Contains(SelectedSendable))
-            {
-                Logger.Info($"Removing {SelectedSendable.PacketInfo.CommandName} Control");
-                sendables.Remove(SelectedSendable);
-                SaveXml();
-            }
         }
     }
 }

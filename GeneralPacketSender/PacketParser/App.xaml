@@ -18,6 +18,9 @@
     <converter:BytesToHexStringConverter x:Key="StringToHex" />
   </Application.Resources>
   <Application.Styles>
+    <StyleInclude Source="avares://Semi.Avalonia/Themes/Index.axaml" />
+    <StyleInclude Source="avares://Semi.Avalonia.DataGrid/Index.axaml" />
+
     <Style Selector="Button">
       <Setter Property="Margin" Value="5" />
     </Style>
@@ -38,6 +41,8 @@
     </Style>
     <Style Selector="ListBoxItem">
       <Setter Property="Padding" Value="2" />
+      <Setter Property="BorderThickness" Value="0 0 0 .51" />
+      <Setter Property="BorderBrush" Value="{DynamicResource ListBoxItemDisabledForeground}" />
     </Style>
 
     <Style Selector="GridSplitter">
@@ -52,7 +57,5 @@
         </ControlTemplate>
       </Setter>
     </Style>
-    <StyleInclude Source="avares://Semi.Avalonia/Themes/Index.axaml" />
-    <StyleInclude Source="avares://Semi.Avalonia.DataGrid/Index.axaml" />
   </Application.Styles>
 </Application>

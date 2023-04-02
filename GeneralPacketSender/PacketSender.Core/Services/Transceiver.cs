@@ -1,26 +1,31 @@
-﻿using System.Net.Sockets;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System.Net.Sockets;
 
 namespace PacketSender.Core
 {
-    public class Transceiver : ISendable
+    public partial class Transceiver : ObservableObject, ISendable
     {
+        [ObservableProperty] private int timeout = 1000;
+
+        [ObservableProperty] private string iP = null!;
+
+        [ObservableProperty] private int port;
+
+        [ObservableProperty] private CommunicationType communicationType;
+
         public Transceiver()
         {
             IP = "";
             Port = 0;
             CommunicationType = CommunicationType.Udp;
         }
+
         public Transceiver(string ip, int port, CommunicationType communicationType)
         {
             IP = ip;
             Port = port;
             CommunicationType = communicationType;
         }
-
-        public int Timeout { get; set; } = 1000;
-        public string IP { get; set; }
-        public int Port { get; set; }
-        public CommunicationType CommunicationType { get; set; }
 
         public async Task<IReply> SendAsync(ReadOnlyMemory<byte> dataToSend, bool isReplyRequired = true, CancellationTokenSource? cancellationToken = default)
         {

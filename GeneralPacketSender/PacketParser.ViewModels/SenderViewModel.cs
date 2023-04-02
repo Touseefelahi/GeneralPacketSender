@@ -16,6 +16,7 @@ namespace PacketParser.ViewModels
         [ObservableProperty] private PacketInfo packetInfo = null!;
         [ObservableProperty] private ObservableCollection<ParserInfo> parserList;
         [ObservableProperty] private ObservableCollection<ParsedData> result = null!;
+        [ObservableProperty] private ParserInfo selectedParser = null!;
         [ObservableProperty] private ObservableCollection<ObservableCollection<ParsedData>> results = null!;
         [ObservableProperty] private Transceiver transceiver;
         [ObservableProperty] private bool showSettings;
@@ -26,8 +27,6 @@ namespace PacketParser.ViewModels
         [ObservableProperty] private ulong totalCount;
 
         private Communication.Core.IListener listener = null!;
-        private ILogger Logger { get; } = null!;
-        private IDialogService DialogService { get; } = null!;
 
         public SenderViewModel()
         {
@@ -47,6 +46,9 @@ namespace PacketParser.ViewModels
             Logger = (ILogger)Services.ServiceProvider.GetService(typeof(ILogger));
             results = new();
         }
+
+        private ILogger Logger { get; } = null!;
+        private IDialogService DialogService { get; } = null!;
 
         public object Clone()
         {
@@ -121,8 +123,9 @@ namespace PacketParser.ViewModels
                         Port = Transceiver.Port
                     };
                     break;
+
                 case CommunicationType.Tcp:
-                    listener = new Communication.Core.ServerTcp()
+                    listener = new Communication.Core.ServerTcp
                     {
                         Port = Transceiver.Port
                     };
@@ -148,7 +151,7 @@ namespace PacketParser.ViewModels
                 try
                 {
                     Result = new ObservableCollection<ParsedData>(Parser.Parse(e.RawBytes, ParserList));
-                    Dispatcher.UIThread.Post(() =>
+                    Dispatcher.UIThread.InvokeAsync(() =>
                     {
                         Results.Add(Result);
                     });
@@ -168,6 +171,27 @@ namespace PacketParser.ViewModels
             listener.StopListener();
             IsListening = listener.IsListening;
             Logger.Info($"{Transceiver.CommunicationType} Server @{Transceiver.Port} Port is stopped");
+        }
+
+        [RelayCommand]
+        private async Task Edit()
+        {
+            await DialogService.EditCommand(this);
+        }
+
+        [RelayCommand]
+        private void AddParser()
+        {
+            ParserList.Add(new ParserInfo());
+        }
+
+        [RelayCommand]
+        private void DeleteParser()
+        {
+            if (SelectedParser != null)
+            {
+                ParserList.Remove(SelectedParser);
+            }
         }
     }
 }

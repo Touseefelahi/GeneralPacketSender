@@ -1,4 +1,5 @@
 ﻿using Avalonia.Controls;
+using PacketParser.ViewModels;
 using PacketParser.Views;
 using PacketSender.Core;
 using System.Collections.Generic;
@@ -8,6 +9,20 @@ namespace PacketParser.Services
 {
     internal class DialogService : IDialogService
     {
+        public async Task<bool> EditCommand(object senderViewModel)
+        {
+            if (senderViewModel is SenderViewModel sender)
+            {
+                var editWindow = new EditCommandView()
+                {
+                    DataContext = sender,
+                };
+                await editWindow.ShowDialog(App.Window);
+                return true;
+            }
+            return false;
+        }
+
         public async Task<string> OpenFileDialog()
         {
             OpenFileDialog dialog = new OpenFileDialog

@@ -10,7 +10,6 @@
   <ItemGroup>
     <PackageReference Include="Communication.Core" Version="1.1.3" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
-
     <PackageReference Include="Avalonia" Version="11.0.0-preview5" />
     <PackageReference Include="Avalonia.Desktop" Version="11.0.0-preview5" />
   </ItemGroup>

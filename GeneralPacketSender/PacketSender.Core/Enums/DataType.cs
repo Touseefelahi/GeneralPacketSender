@@ -6,8 +6,8 @@
     public enum DataType
     {
         Bool,
-        Char,
-        UChar,
+        Int8,
+        UInt8,
         Int16,
         UInt16,
         Int32,

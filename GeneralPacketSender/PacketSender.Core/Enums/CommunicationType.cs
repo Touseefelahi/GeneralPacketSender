@@ -1,7 +1,7 @@
 ﻿namespace PacketSender.Core
 {
     /// <summary>
-    /// Communication Type 
+    /// Communication Type
     /// </summary>
     public enum CommunicationType
     {
@@ -13,11 +13,6 @@
         /// <summary>
         /// TCP communication- Transmission control protocol
         /// </summary>
-        Tcp,
-
-        /// <summary>
-        /// Serial communication- Simple Rs232
-        /// </summary>
-        Serial
+        Tcp
     }
 }

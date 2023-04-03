@@ -28,9 +28,8 @@ namespace GeneralPacketSender
             }
             catch (Exception)
             {
-
             }
-            return null;
+            return string.Empty;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -56,5 +55,4 @@ namespace GeneralPacketSender
             return value;
         }
     }
-
 }

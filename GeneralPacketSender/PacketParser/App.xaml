@@ -1,0 +1,61 @@
+<Application
+    x:Class="PacketParser.App"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converter="clr-namespace:PacketParser.Converters">
+  <Application.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceInclude Source="/Views/SenderView.axaml" />
+      </ResourceDictionary.MergedDictionaries>
+    </ResourceDictionary>
+  </Application.Resources>
+
+  <Application.DataTemplates>
+    <StaticResource ResourceKey="senderTemplate" />
+  </Application.DataTemplates>
+  <Application.Resources>
+    <converter:BytesToHexStringConverter x:Key="StringToHex" />
+  </Application.Resources>
+  <Application.Styles>
+    <StyleInclude Source="avares://Semi.Avalonia/Themes/Index.axaml" />
+    <StyleInclude Source="avares://Semi.Avalonia.DataGrid/Index.axaml" />
+
+    <Style Selector="Button">
+      <Setter Property="Margin" Value="5" />
+    </Style>
+    <Style Selector="ToggleButton">
+      <Setter Property="Margin" Value="5" />
+    </Style>
+
+    <Style Selector="TextBox">
+      <Setter Property="Margin" Value="5" />
+    </Style>
+
+    <Style Selector="ComboBox">
+      <Setter Property="Margin" Value="5" />
+    </Style>
+
+    <Style Selector="TextBlock">
+      <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style Selector="ListBoxItem">
+      <Setter Property="Padding" Value="2" />
+      <Setter Property="BorderThickness" Value="0 0 0 .51" />
+      <Setter Property="BorderBrush" Value="{DynamicResource ListBoxItemDisabledForeground}" />
+    </Style>
+
+    <Style Selector="GridSplitter">
+      <Setter Property="Template">
+        <ControlTemplate>
+          <Border Background="{TemplateBinding Background}" CornerRadius="5">
+            <TextBlock
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Text="━━━" />
+          </Border>
+        </ControlTemplate>
+      </Setter>
+    </Style>
+  </Application.Styles>
+</Application>

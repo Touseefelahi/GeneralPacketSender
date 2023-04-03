@@ -1,0 +1,175 @@
+<Window
+    x:Class="PacketParser.Views.EditCommandView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converter="clr-namespace:PacketParser.Converters"
+    xmlns:core="clr-namespace:PacketSender.Core;assembly=PacketSender.Core"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+    xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
+    xmlns:icon="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:PacketParser.ViewModels;assembly=PacketParser.ViewModels"
+    Name="window"
+    Title="Edit Command"
+    MinWidth="400"
+    MinHeight="500"
+    ExtendClientAreaToDecorationsHint="True"
+    SizeToContent="WidthAndHeight"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
+
+  <Grid Margin="10,35,4,4">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="auto" />
+      <RowDefinition />
+      <RowDefinition Height="auto" />
+    </Grid.RowDefinitions>
+    <Border
+        Grid.Row="0"
+        Grid.ColumnSpan="3"
+        BorderBrush="{StaticResource SemiColorText2}"
+        BorderThickness="0,.51,0,.51"
+        ZIndex="5" />
+    <TextBlock
+        Margin="0,-26,0,0"
+        VerticalAlignment="Top"
+        Text="{Binding Title, ElementName=window}" />
+
+    <Grid>
+      <Grid.RowDefinitions>
+        <RowDefinition />
+        <RowDefinition />
+        <RowDefinition Height="auto" />
+        <RowDefinition />
+      </Grid.RowDefinitions>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="80" />
+        <ColumnDefinition />
+      </Grid.ColumnDefinitions>
+
+      <TextBlock VerticalAlignment="Center" Text="Name" />
+      <TextBox
+          Grid.Column="1"
+          Text="{Binding PacketInfo.CommandName}"
+          Watermark="Command Name" />
+
+      <TextBlock
+          Grid.Row="1"
+          VerticalAlignment="Center"
+          Text="Command" />
+      <TextBox
+          Grid.Row="1"
+          Grid.Column="1"
+          Text="{Binding PacketInfo.CommandAsString}"
+          Watermark="Command Hex" />
+      <TextBlock
+          Grid.Row="2"
+          Grid.Column="1"
+          Margin="15,0,0,0"
+          Padding="0"
+          VerticalAlignment="Top"
+          FontSize="8"
+          Text="{Binding PacketInfo.Command, Converter={StaticResource StringToHex}}" />
+
+      <TextBlock Grid.Row="3" Text="Type" />
+      <StackPanel
+          Grid.Row="3"
+          Grid.Column="1"
+          Orientation="Horizontal">
+        <ComboBox
+            Width="80"
+            Items="{Binding Source={converter:EnumToSource EnumType=core:CommunicationType}}"
+            SelectedItem="{Binding Transceiver.CommunicationType}" />
+
+        <StackPanel Orientation="Horizontal">
+          <CheckBox Content="Is Server" IsChecked="{Binding IsServer}" />
+          <TextBlock
+              Margin="10,5"
+              IsVisible="{Binding !IsServer}"
+              Text="IP" />
+          <TextBox
+              MinWidth="130"
+              IsVisible="{Binding !IsServer}"
+              Text="{Binding Transceiver.IP}"
+               Watermark="e.g. 192.168.10.5" />
+          <TextBlock Margin="10,5" Text="Port" />
+          <TextBox
+              MinWidth="60"
+              Text="{Binding Transceiver.Port}"
+              Watermark="e.g. 5005" />
+        </StackPanel>
+
+        <StackPanel
+            VerticalAlignment="Center"
+            IsVisible="{Binding !IsServer}"
+            Orientation="Horizontal">
+          <CheckBox
+              Margin="5,2"
+              Content="Continous"
+              IsChecked="{Binding IsOnRepeatSend}" />
+          <TextBox
+              MinWidth="50"
+              IsVisible="{Binding IsOnRepeatSend}"
+              Text="{Binding TimePeriod}" />
+          <TextBlock
+              Margin="2"
+              IsVisible="{Binding IsOnRepeatSend}"
+              Text="ms" />
+        </StackPanel>
+      </StackPanel>
+    </Grid>
+
+    <!--  Parser  -->
+    <Grid Grid.Row="1" Margin="0">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="auto" />
+        <RowDefinition Height="*" />
+        <RowDefinition Height="auto" />
+      </Grid.RowDefinitions>
+
+      <TextBlock Margin="2,4" Text="Parser" />
+      <DataGrid
+          Grid.Row="1"
+          AutoGenerateColumns="False"
+          Items="{Binding ParserList, Mode=TwoWay}"
+          SelectedItem="{Binding SelectedParser}">
+        <DataGrid.Columns>
+          <DataGridTemplateColumn Header="DataType">
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate DataType="core:CommunicationType">
+                <ComboBox
+                    Width="100"
+                    Items="{Binding Source={converter:EnumToSource EnumType=core:DataType}}"
+                    SelectedItem="{Binding DataType}" />
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+          <DataGridTextColumn Binding="{Binding Name}" Header="Name" />
+          <DataGridTextColumn Binding="{Binding StartIndex}" Header="Start Index" />
+        </DataGrid.Columns>
+      </DataGrid>
+      <DockPanel Grid.Row="3">
+        <Button
+            HorizontalAlignment="Stretch"
+            HorizontalContentAlignment="Center"
+            Classes="Danger"
+            Command="{Binding DeleteParserCommand}"
+            Content="Delete" />
+        <Button
+            HorizontalAlignment="Stretch"
+            HorizontalContentAlignment="Center"
+            Command="{Binding AddParserCommand}"
+            Content="Add" />
+      </DockPanel>
+    </Grid>
+
+    <StackPanel
+        Grid.Row="2"
+        HorizontalAlignment="Right"
+        VerticalAlignment="Bottom"
+        Orientation="Horizontal">
+      <Button Click="SaveClicked" Content="Done" />
+    </StackPanel>
+  </Grid>
+</Window>

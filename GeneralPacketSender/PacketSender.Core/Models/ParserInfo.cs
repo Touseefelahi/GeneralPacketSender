@@ -3,7 +3,7 @@
     /// <summary>
     /// Parser Info
     /// </summary>
-    public sealed class ParserInfo
+    public sealed class ParserInfo : ICloneable
     {
         /// <summary>
         /// Type of value
@@ -31,6 +31,11 @@
             DataType = dataType;
             Name = name;
             StartIndex = startIndex;
+        }
+
+        public object Clone()
+        {
+            return MemberwiseClone();
         }
     }
 }

@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
-		<TargetFramework>net6.0-windows</TargetFramework>
+		<TargetFramework>net7.0-windows</TargetFramework>
 		<Nullable>enable</Nullable>
 		<UseWPF>true</UseWPF>
 		<Platforms>x64</Platforms>
@@ -19,18 +19,11 @@
 	  <Folder Include="Services\" />
 	</ItemGroup>
 	<ItemGroup>
+	  <ProjectReference Include="..\PacketParser.ViewModels\PacketParser.ViewModels.csproj" />
 	  <ProjectReference Include="..\PacketSender.Core\PacketSender.Core.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Page Update="Views\SendableTemplate.xaml">
-	    <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-	    <SubType>Designer</SubType>
-	  </Page>
-	  <Page Update="Views\SerialTemplate.xaml">
-	    <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-	    <SubType>Designer</SubType>
-	  </Page>
-	  <Page Update="Views\TcpTemplate.xaml">
 	    <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
 	    <SubType>Designer</SubType>
 	  </Page>

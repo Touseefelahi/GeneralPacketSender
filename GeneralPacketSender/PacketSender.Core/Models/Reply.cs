@@ -13,5 +13,10 @@
         {
             ReplyData = dataToSetForReply;
         }
+
+        public void InitializeMemory(int length)
+        {
+            ReplyData = new Memory<byte>(new byte[length]);
+        }
     }
 }

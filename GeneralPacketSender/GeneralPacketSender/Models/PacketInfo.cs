@@ -1,5 +1,4 @@
-﻿using System.Reflection.Emit;
-using System.Text;
+﻿using System.Text;
 using System.Xml.Serialization;
 
 namespace GeneralPacketSender.Models
@@ -10,7 +9,7 @@ namespace GeneralPacketSender.Models
     public sealed class PacketInfo : ICloneable
     {
         private Memory<byte> command;
-        private string? commandAsString;
+        private string commandAsString = null!;
 
         [XmlIgnore]
         public Memory<byte> Command
@@ -21,6 +20,29 @@ namespace GeneralPacketSender.Models
                 command = value;
                 SetCommandString(command);
             }
+        }
+
+        public string CommandAsString
+        {
+            get => commandAsString;
+            set
+            {
+                commandAsString = value;
+                SetMemoryByte(commandAsString);
+            }
+        }
+
+        public string? CommandName { get; set; }
+
+        /// <summary>
+        /// It will create the deep copy of this object
+        /// </summary>
+        /// <returns></returns>
+        public object Clone()
+        {
+            var cloned = (PacketInfo)MemberwiseClone();
+            cloned.Command = new Memory<byte>(Command.Span.ToArray());
+            return cloned;
         }
 
         private void SetCommandString(Memory<byte> memory)
@@ -40,23 +62,10 @@ namespace GeneralPacketSender.Models
             }
             catch (Exception)
             {
-
             }
         }
 
-        public string? CommandName { get; set; }
-
-        public string? CommandAsString
-        {
-            get => commandAsString;
-            set
-            {
-                commandAsString = value;
-                SetMemoryByte(commandAsString);
-            }
-        }
-
-        private void SetMemoryByte(string? commandAsString)
+        private void SetMemoryByte(string commandAsString)
         {
             try
             {
@@ -68,23 +77,11 @@ namespace GeneralPacketSender.Models
                     var firstSegment = commandAsString.Substring(0, commandAsString.Length - 1);
                     commandAsString = firstSegment + "0" + lastChar;
                 }
-                command = new Memory<byte>(System.Convert.FromHexString(commandAsString));
-
+                command = new Memory<byte>(Convert.FromHexString(commandAsString));
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
-        }
-
-        /// <summary>
-        /// It will create the deep copy of this object
-        /// </summary>
-        /// <returns></returns>
-        public object Clone()
-        {
-            var cloned = (PacketInfo)MemberwiseClone();
-            cloned.Command = new Memory<byte>(Command.Span.ToArray());
-            return cloned;
         }
     }
 }
